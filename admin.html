@@ -94,9 +94,8 @@
 <body>
 
 <div class="container">
-  <!-- หน้า Login ปลอดภัย ไม่โชว์รหัสผ่าน -->
   <div class="card" id="loginBox">
-    <div class="title">เข้าสู่ระบบแอดมิน ♡ Namwhan Store</div>
+    <div class="title">เข้าสู่ระบบแอดมิน Namwhan Store</div>
     <div class="field-group">
       <label class="field-label">email</label>
       <input type="text" id="loginEmail" class="input-box" placeholder="email">
@@ -149,7 +148,7 @@
 
       <div class="field-group">
         <label class="field-label">หัวข้อหมวดไฮไลท์</label>
-        <input type="text" id="hlHeaderTitle" class="input-box" placeholder="✨ ไฮไลท์รีวิว">
+        <input type="text" id="hlHeaderTitle" class="input-box" placeholder="ไฮไลท์รีวิว">
       </div>
 
       <div class="field-group">
@@ -158,21 +157,21 @@
       </div>
     </div>
 
-    <!-- 2. จัดการไฮไลท์รีวิว (ใส่รูปได้ไม่จำกัด) -->
+    <!-- 2. จัดการไฮไลท์รีวิว -->
     <div class="card">
       <div class="title">จัดการไฮไลท์สตอรี่ (ใส่รูปได้ไม่จำกัด)</div>
       <div id="highlightsManager"></div>
       <button type="button" class="btn-add" onclick="addNewHighlight()">+ เพิ่มไฮไลท์ใหม่</button>
     </div>
 
-    <!-- 3. จัดการโพสต์หน้า Home (เพิ่ม/ลบได้ไม่จำกัด) -->
+    <!-- 3. จัดการโพสต์หน้า Home -->
     <div class="card">
       <div class="title">จัดการโพสต์รูปผลงาน (หน้า Home)</div>
       <div id="postsManager"></div>
       <button type="button" class="btn-add" onclick="addNewPostItem()">+ เพิ่มโพสต์ใหม่</button>
     </div>
 
-    <!-- 4. ความปลอดภัยบัญชีแอดมิน -->
+    <!-- 4. บัญชีแอดมิน -->
     <div class="card">
       <div class="title">บัญชีแอดมิน</div>
       <div class="field-group">
@@ -193,7 +192,6 @@
 <div class="status-msg" id="statusMsg"></div>
 
 <script>
-  // บัญชีล็อกอินตามที่กำหนด
   let currentAdminEmail = "janejirx@icloud.com";
   let currentAdminPass = "04022568";
 
@@ -297,18 +295,17 @@
       const doc = await db.collection(DB_SITE).doc("config").get();
       const d = doc.exists ? doc.data() : {};
       
-      document.getElementById("siteTitle").value = d.siteTitle || "Namwhan Store ♡";
+      document.getElementById("siteTitle").value = d.siteTitle || "Namwhan Store";
       document.getElementById("username").value = d.username || "Namwhan Store";
       document.getElementById("handle").value = d.handle || "@namwhan_store";
       document.getElementById("bio").value = d.bio || "รีวิวซื้อขายทั้งหมดของร้าน";
       document.getElementById("bannerImg").value = d.bannerImg || "https://files.catbox.moe/uff8mt.png";
       document.getElementById("profileImg").value = d.profileImg || "https://files.catbox.moe/em92jo.jpeg";
       document.getElementById("discordFrame").value = d.discordFrame || "https://files.catbox.moe/ui32x2.png";
-      document.getElementById("hlHeaderTitle").value = d.hlHeaderTitle || "✨ ไฮไลท์รีวิว";
+      document.getElementById("hlHeaderTitle").value = d.hlHeaderTitle || "ไฮไลท์รีวิว";
       document.getElementById("musicUrl").value = d.musicUrl || "https://files.catbox.moe/t51njv.mp3";
       document.getElementById("adminEmailInput").value = currentAdminEmail;
 
-      // ดึงไฮไลท์
       const hlSnap = await db.collection(DB_HL).orderBy("order", "asc").get();
       highlightsData = [];
       for (const hDoc of hlSnap.docs) {
@@ -324,7 +321,6 @@
       }
       renderHighlightManagers();
 
-      // ดึงโพสต์หน้า Home
       const postsSnap = await db.collection(DB_POSTS).orderBy("idx", "asc").get();
       postsData = [];
       postsSnap.forEach(s => postsData.push({ id: s.id, ...s.data() }));
@@ -497,7 +493,6 @@
     try {
       await db.collection(DB_SITE).doc("config").set(payload, { merge: true });
 
-      // บันทึกโพสต์แยก Collection เอกสารละ 1 โพสต์
       const existingPostsSnap = await db.collection(DB_POSTS).get();
       const pBatch = db.batch();
       existingPostsSnap.forEach(d => pBatch.delete(d.ref));
@@ -513,7 +508,6 @@
         }
       }
 
-      // บันทึกไฮไลท์และรูปภาพแยก Sub-collection อิสระ (ไม่จำกัดรูป)
       for (let i = 0; i < highlightsData.length; i++) {
         const hl = highlightsData[i];
         let hlDocRef;
@@ -546,7 +540,7 @@
       }
 
       showStatus("บันทึกข้อมูลทั้งหมดสำเร็จแล้ว");
-      alert("บันทึกข้อมูลขึ้นระบบ Namwhan Store สำเร็จเรียบร้อยแล้วค่ะ! หมดปัญหาขนาดไฟล์เต็มแน่นอน ♡");
+      alert("บันทึกข้อมูลขึ้นระบบ Namwhan Store สำเร็จเรียบร้อยแล้วค่ะ!");
       document.getElementById("newAdminPassword").value = "";
     } catch (err) {
       showStatus("บันทึกไม่สำเร็จ: " + err.message, true);
